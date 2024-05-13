@@ -47,6 +47,8 @@ jobs:
 
   publish:
     runs-on: ubuntu-latest
+    needs: build
+    id: create-release
     steps:
       - name: create release
         uses: actions/create-release@v1
@@ -58,4 +60,21 @@ jobs:
           body: New release for ${{ github.sha }}
           draft: false
           prerelease: false
+      - name: download artifact
+        uses: actions/download-artifcate@v2
+        with:
+          name: zipped-bundle
+      - name: upload release asset
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        with:
+          upload_url: ${{ steps.create-release,outputs.upload_url }}
+          assset_path: ./${{ github.sa }}.zip
+          asset_name: source_code_with_libraries.zip
+          asset_content_type: application.zip
+          
+          
+          
+          
           
